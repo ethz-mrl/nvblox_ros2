@@ -6,7 +6,6 @@
   <description>Python utilities used across nvblox_ros</description>
   <maintainer email="isaac-ros-maintainers@nvidia.com">alex</maintainer>
   <license>Apache-2.0</license>
-  <build_depend>isaac_ros_common</build_depend>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>

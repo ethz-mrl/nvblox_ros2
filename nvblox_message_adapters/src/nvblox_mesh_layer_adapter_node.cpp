@@ -17,19 +17,21 @@
 
 #include "nvblox_message_adapters/nvblox_mesh_layer_adapter_node.hpp"
 
-#include <isaac_ros_common/qos.hpp>
+#include <nvblox_ros_common/qos.hpp>
 
 namespace nvidia::nvblox {
 
 NvbloxMeshLayerAdapterNode::NvbloxMeshLayerAdapterNode(
-    const rclcpp::NodeOptions & options, const std::string & node_name)
-    : rclcpp::Node(node_name, options){
+    const rclcpp::NodeOptions& options, const std::string& node_name)
+    : rclcpp::Node(node_name, options) {
   const rclcpp::QoS input_qos =
-    isaac_ros::common::AddQosParameter(*this, "SYSTEM_DEFAULT", "input_qos");
+      ::nvblox::AddQosParameter(*this, "SYSTEM_DEFAULT", "input_qos");
   subscriber_ = create_subscription<nvblox_msgs::msg::Mesh>(
-    "mesh", input_qos,
-    std::bind(&NvbloxMeshLayerAdapterNode::messageCallback, this, std::placeholders::_1));
-  publisher_ = create_publisher<nvblox_msgs::msg::MeshSerialized>("~/mesh_serialized", 10);
+      "mesh", input_qos,
+      std::bind(&NvbloxMeshLayerAdapterNode::messageCallback, this,
+                std::placeholders::_1));
+  publisher_ = create_publisher<nvblox_msgs::msg::MeshSerialized>(
+      "~/mesh_serialized", 10);
   num_vertices_ = 0;
 }
 
@@ -41,8 +43,8 @@ void NvbloxMeshLayerAdapterNode::messageCallback(
     num_vertices_ = 0;
     num_triangles_ = 0;
   }
-  // Go through the list of blocks of the Mesh message, replace the one already existing
-  // and add the new ones.
+  // Go through the list of blocks of the Mesh message, replace the one already
+  // existing and add the new ones.
   for (size_t id = 0; id < msg->block_indices.size(); id++) {
     const auto& idx = msg->block_indices[id];
     auto& block_to_modify = blocks_[{idx.x, idx.y, idx.z}];
@@ -57,15 +59,19 @@ void NvbloxMeshLayerAdapterNode::messageCallback(
       blocks_.erase({idx.x, idx.y, idx.z});
       continue;
     }
-    // Serialize the message into a single float array for the vertices, colors, and triangles.
+    // Serialize the message into a single float array for the vertices, colors,
+    // and triangles.
     num_vertices_ += block_to_modify.num_vertices;
     num_triangles_ += block_to_modify.num_triangles;
     block_to_modify.vertices.resize(3 * block_to_modify.num_vertices);
     block_to_modify.colors.resize(4 * block_to_modify.num_vertices);
     for (int bid = 0; bid < block_to_modify.num_vertices; bid++) {
-      block_to_modify.vertices[3 * bid + 0] = block_from_message.vertices[bid].x;
-      block_to_modify.vertices[3 * bid + 1] = block_from_message.vertices[bid].y;
-      block_to_modify.vertices[3 * bid + 2] = block_from_message.vertices[bid].z;
+      block_to_modify.vertices[3 * bid + 0] =
+          block_from_message.vertices[bid].x;
+      block_to_modify.vertices[3 * bid + 1] =
+          block_from_message.vertices[bid].y;
+      block_to_modify.vertices[3 * bid + 2] =
+          block_from_message.vertices[bid].z;
       block_to_modify.colors[4 * bid + 0] = block_from_message.colors[bid].r;
       block_to_modify.colors[4 * bid + 1] = block_from_message.colors[bid].g;
       block_to_modify.colors[4 * bid + 2] = block_from_message.colors[bid].b;
@@ -85,11 +91,14 @@ void NvbloxMeshLayerAdapterNode::messageCallback(
   int vertices_id = 0;
   // Loop through the blocks and insert them in the overall mesh
   for (const auto& kv : blocks_) {
-    msg_serialized.vertices.insert(
-        msg_serialized.vertices.end(), kv.second.vertices.begin(), kv.second.vertices.end());
-    msg_serialized.colors.insert(
-        msg_serialized.colors.end(), kv.second.colors.begin(), kv.second.colors.end());
-    // For triangles, we need to offset them by the number of vertices already added.
+    msg_serialized.vertices.insert(msg_serialized.vertices.end(),
+                                   kv.second.vertices.begin(),
+                                   kv.second.vertices.end());
+    msg_serialized.colors.insert(msg_serialized.colors.end(),
+                                 kv.second.colors.begin(),
+                                 kv.second.colors.end());
+    // For triangles, we need to offset them by the number of vertices already
+    // added.
     for (int i : kv.second.triangles) {
       msg_serialized.triangles.push_back(i + vertices_id);
     }

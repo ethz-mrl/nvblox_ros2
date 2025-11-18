@@ -17,7 +17,7 @@
 
 #include <string>
 
-#include <isaac_ros_common/qos.hpp>
+#include "nvblox_ros_common/qos.hpp"
 
 #include "nvblox_image_padding/image_padding_cropping_node.hpp"
 
@@ -35,7 +35,7 @@ ImagePaddingCroppingNode::ImagePaddingCroppingNode(
 
   // Settings for QoS.
   const rclcpp::QoS image_qos =
-    isaac_ros::common::AddQosParameter(*this, kDefaultImageQos_, "image_qos");
+    nvblox::AddQosParameter(*this, kDefaultImageQos_, "image_qos");
 
   desired_height_ = declare_parameter<int>("desired_height", desired_height_);
   desired_width_ = declare_parameter<int>("desired_width", desired_width_);

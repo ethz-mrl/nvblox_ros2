@@ -29,7 +29,7 @@ find_package(rclcpp_components REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(message_filters REQUIRED)
 find_package(realsense2_camera_msgs REQUIRED)
-find_package(isaac_ros_common REQUIRED)
+find_package(nvblox_ros_common REQUIRED)
 find_package(CUDAToolkit REQUIRED)
 
 
@@ -47,7 +47,7 @@ ament_target_dependencies(realsense_splitter_component
   sensor_msgs
   message_filters
   realsense2_camera_msgs
-  isaac_ros_common
+  nvblox_ros_common
 )
 target_include_directories(realsense_splitter_component PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -112,6 +112,7 @@ ament_export_targets(
 ament_export_dependencies(
   rclcpp
   sensor_msgs
+  nvblox_ros_common
 )
 
 ament_package()

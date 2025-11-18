@@ -26,13 +26,10 @@ install(DIRECTORY config launch
   DESTINATION share/${PROJECT_NAME})
 
 if(BUILD_TESTING)
-  find_package(isaac_ros_test_cmake)
   find_package(ament_cmake_copyright REQUIRED)
   ament_copyright()
   find_package(ament_cmake_lint_cmake REQUIRED)
   ament_lint_cmake()
-
-  add_subdirectory(test)
 endif()
 
 ament_package()

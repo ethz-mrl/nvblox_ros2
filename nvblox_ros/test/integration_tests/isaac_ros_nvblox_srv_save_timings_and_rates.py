@@ -20,7 +20,7 @@ import pathlib
 import subprocess
 import time
 
-from isaac_ros_test import IsaacROSBaseTest
+from .disabled_base import IsaacROSBaseTest
 
 from launch_ros.actions import Node
 
@@ -68,12 +68,12 @@ class IsaacROSNvBloxTest(IsaacROSBaseTest):
         # Create service client for save_timings service
         self.save_timings_cli = self.node.create_client(
             FilePath,
-            '/isaac_ros_test/nvblox_test_srv_save_timings_and_rates/nvblox_node/save_timings')
+            '/nvblox_disabled_tests/srv_save_timings_and_rates/nvblox_node/save_timings')
 
         # Create service client for save_rates service
         self.save_rates_cli = self.node.create_client(
             FilePath,
-            '/isaac_ros_test/nvblox_test_srv_save_timings_and_rates/nvblox_node/save_rates')
+            '/nvblox_disabled_tests/srv_save_timings_and_rates/nvblox_node/save_rates')
 
         time.sleep(TIMEOUT)
 

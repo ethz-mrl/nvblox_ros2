@@ -17,7 +17,7 @@
 
 #include "realsense_splitter/realsense_splitter_node.hpp"
 
-#include <isaac_ros_common/qos.hpp>
+#include "nvblox_ros_common/qos.hpp"
 
 namespace nvblox
 {
@@ -32,10 +32,10 @@ RealsenseSplitterNode::RealsenseSplitterNode(const rclcpp::NodeOptions & options
   constexpr size_t kInputQueueSize = 10;
   constexpr size_t kOutputQueueSize = 10;
 
-  const rclcpp::QoS input_qos = isaac_ros::common::AddQosParameter(*this, kDefaultQoS, "input_qos")
+  const rclcpp::QoS input_qos = nvblox::AddQosParameter(*this, kDefaultQoS, "input_qos")
     .keep_last(kInputQueueSize);
   const rclcpp::QoS output_qos =
-    isaac_ros::common::AddQosParameter(*this, kDefaultQoS, "output_qos")
+    nvblox::AddQosParameter(*this, kDefaultQoS, "output_qos")
     .keep_last(kOutputQueueSize);
   const rmw_qos_profile_t input_qos_profile = input_qos.get_rmw_qos_profile();
 

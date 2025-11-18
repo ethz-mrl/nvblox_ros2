@@ -20,7 +20,7 @@ import pathlib
 import subprocess
 import time
 
-from isaac_ros_test import IsaacROSBaseTest
+from .disabled_base import IsaacROSBaseTest
 
 import launch
 from launch_ros.actions import Node

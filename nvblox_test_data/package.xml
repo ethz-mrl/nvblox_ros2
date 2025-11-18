@@ -22,7 +22,6 @@ license agreement from NVIDIA CORPORATION is strictly prohibited.
   <author>Alexander Millane</author>
 
   <buildtool_depend>ament_cmake_auto</buildtool_depend>
-  <build_depend>isaac_ros_common</build_depend>
 
   <export>
     <build_type>ament_cmake</build_type>

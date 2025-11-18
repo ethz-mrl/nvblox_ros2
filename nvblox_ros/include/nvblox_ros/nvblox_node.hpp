@@ -60,16 +60,8 @@
 #include "nvblox_ros/mapper_initialization.hpp"
 #include "nvblox_ros/transformer.hpp"
 #include "nvblox_ros/camera_cache.hpp"
-#include "nvblox_ros/nitros_types.hpp"
 #include "nvblox_ros/node_params.hpp"
 #include "nvblox_ros/service_request_task.hpp"
-
-#include "isaac_ros_managed_nitros/managed_nitros_message_filters_subscriber.hpp"
-#include "isaac_ros_managed_nitros/managed_nitros_publisher.hpp"
-#include "isaac_ros_managed_nitros/managed_nitros_subscriber.hpp"
-#include "isaac_ros_nitros_camera_info_type/nitros_camera_info.hpp"
-#include "isaac_ros_nitros_image_type/nitros_image.hpp"
-#include "isaac_ros_nitros_image_type/nitros_image_view.hpp"
 
 namespace nvblox
 {
@@ -95,13 +87,13 @@ public:
   // Internal types for passing around images, their matching
   // segmentation masks, as well as the camera intrinsics.
   using ImageSegmentationMaskMsgTuple =
-    std::tuple<NitrosViewPtr,
+    std::tuple<sensor_msgs::msg::Image::ConstSharedPtr,
       sensor_msgs::msg::CameraInfo::ConstSharedPtr,
-      NitrosViewPtr,
+      sensor_msgs::msg::Image::ConstSharedPtr,
       sensor_msgs::msg::CameraInfo::ConstSharedPtr>;
 
   using ImageMsgTuple =
-    std::tuple<NitrosViewPtr,
+    std::tuple<sensor_msgs::msg::Image::ConstSharedPtr,
       sensor_msgs::msg::CameraInfo::ConstSharedPtr>;
 
   // Expresses the various types of Images that can be queued in the node for processing.
@@ -109,8 +101,9 @@ public:
 
   // Internal type of an image message with an *optional* mask.
   using ImageMsgOptionalMaskMsgTuple =
-    std::tuple<NitrosViewPtr, sensor_msgs::msg::CameraInfo::ConstSharedPtr,
-      std::optional<NitrosViewPtr>,
+    std::tuple<sensor_msgs::msg::Image::ConstSharedPtr,
+      sensor_msgs::msg::CameraInfo::ConstSharedPtr,
+      std::optional<sensor_msgs::msg::Image::ConstSharedPtr>,
       std::optional<sensor_msgs::msg::CameraInfo::ConstSharedPtr>>;
 
   // Named indices for the MsgTuple members.
@@ -121,20 +114,20 @@ public:
 
   // Callback functions. These just stick images in a queue.
   void depthPlusMaskImageCallback(
-    const nvidia::isaac_ros::nitros::NitrosImage::ConstSharedPtr & depth_image,
+    const sensor_msgs::msg::Image::ConstSharedPtr & depth_image,
     const sensor_msgs::msg::CameraInfo::ConstSharedPtr & depth_camera_info,
-    const nvidia::isaac_ros::nitros::NitrosImage::ConstSharedPtr & seg_image,
+    const sensor_msgs::msg::Image::ConstSharedPtr & seg_image,
     const sensor_msgs::msg::CameraInfo::ConstSharedPtr & seg_camera_info);
   void depthImageCallback(
-    const nvidia::isaac_ros::nitros::NitrosImage::ConstSharedPtr & depth_image,
+    const sensor_msgs::msg::Image::ConstSharedPtr & depth_image,
     const sensor_msgs::msg::CameraInfo::ConstSharedPtr & depth_camera_info);
   void colorPlusMaskImageCallback(
-    const nvidia::isaac_ros::nitros::NitrosImage::ConstSharedPtr & color_image,
+    const sensor_msgs::msg::Image::ConstSharedPtr & color_image,
     const sensor_msgs::msg::CameraInfo::ConstSharedPtr & color_camera_info,
-    const nvidia::isaac_ros::nitros::NitrosImage::ConstSharedPtr & seg_image,
+    const sensor_msgs::msg::Image::ConstSharedPtr & seg_image,
     const sensor_msgs::msg::CameraInfo::ConstSharedPtr & seg_camera_info);
   void colorImageCallback(
-    const nvidia::isaac_ros::nitros::NitrosImage::ConstSharedPtr & color_image,
+    const sensor_msgs::msg::Image::ConstSharedPtr & color_image,
     const sensor_msgs::msg::CameraInfo::ConstSharedPtr & color_camera_info);
   void pointcloudCallback(
     const sensor_msgs::msg::PointCloud2::ConstSharedPtr pointcloud);
@@ -331,32 +324,32 @@ protected:
 
 
   /// Image + info subscribers
-  std::vector<std::shared_ptr<nvidia::isaac_ros::nitros::message_filters::Subscriber<NitrosView>>>
+  std::vector<std::shared_ptr<::message_filters::Subscriber<sensor_msgs::msg::Image>>>
   depth_image_subs_;
   std::vector<std::shared_ptr<::message_filters::Subscriber<sensor_msgs::msg::CameraInfo>>>
   depth_camera_info_subs_;
-  std::vector<std::shared_ptr<nvidia::isaac_ros::nitros::message_filters::Subscriber<NitrosView>>>
+  std::vector<std::shared_ptr<::message_filters::Subscriber<sensor_msgs::msg::Image>>>
   color_image_subs_;
   std::vector<std::shared_ptr<::message_filters::Subscriber<sensor_msgs::msg::CameraInfo>>>
   color_camera_info_subs_;
-  std::vector<std::shared_ptr<nvidia::isaac_ros::nitros::message_filters::Subscriber<NitrosView>>>
+  std::vector<std::shared_ptr<::message_filters::Subscriber<sensor_msgs::msg::Image>>>
   segmentation_image_subs_;
   std::vector<std::shared_ptr<::message_filters::Subscriber<sensor_msgs::msg::CameraInfo>>>
   segmentation_camera_info_subs_;
 
   // Sync Policies
   using image_mask_approx_policy = ::message_filters::sync_policies::ApproximateTime<
-    nvidia::isaac_ros::nitros::NitrosImage, sensor_msgs::msg::CameraInfo,
-    nvidia::isaac_ros::nitros::NitrosImage, sensor_msgs::msg::CameraInfo>;
+    sensor_msgs::msg::Image, sensor_msgs::msg::CameraInfo,
+    sensor_msgs::msg::Image, sensor_msgs::msg::CameraInfo>;
   using image_mask_approx_sync = ::message_filters::Synchronizer<image_mask_approx_policy>;
 
   using image_exact_policy = ::message_filters::sync_policies::ExactTime<
-    nvidia::isaac_ros::nitros::NitrosImage, sensor_msgs::msg::CameraInfo>;
+    sensor_msgs::msg::Image, sensor_msgs::msg::CameraInfo>;
   using image_exact_sync = ::message_filters::Synchronizer<image_exact_policy>;
 
   using image_mask_exact_policy = ::message_filters::sync_policies::ExactTime<
-    nvidia::isaac_ros::nitros::NitrosImage, sensor_msgs::msg::CameraInfo,
-    nvidia::isaac_ros::nitros::NitrosImage, sensor_msgs::msg::CameraInfo>;
+    sensor_msgs::msg::Image, sensor_msgs::msg::CameraInfo,
+    sensor_msgs::msg::Image, sensor_msgs::msg::CameraInfo>;
   using image_mask_exact_sync = ::message_filters::Synchronizer<image_mask_exact_policy>;
 
   std::vector<std::shared_ptr<image_mask_approx_sync>> timesync_depth_mask_;
@@ -482,6 +475,8 @@ protected:
   MonoImage mask_image_{MemoryType::kDevice};
   DepthImage pointcloud_image_{MemoryType::kDevice};
   Image<conversions::Rgb> rgb_image_tmp_{MemoryType::kDevice};
+  Image<conversions::Bgra> bgra_image_tmp_{MemoryType::kDevice};
+  Image<int16_t> depth_image_tmp_{MemoryType::kDevice};
 
   // Object for back projecting image to a pointcloud.
   DepthImageBackProjector image_back_projector_;
