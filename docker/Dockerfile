@@ -44,6 +44,7 @@ RUN echo 'source /etc/nvblox_env.sh' | tee --append /etc/bash.bashrc
 # Install ROS 2 Jazzy base (minimal)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ros-jazzy-ros-base ros-jazzy-cv-bridge ros-jazzy-rviz2 ros-jazzy-rviz-common \
+    ros-jazzy-realsense2-camera-msgs \
     && rm -rf /var/lib/apt/lists/*
 
 # Environment setup
