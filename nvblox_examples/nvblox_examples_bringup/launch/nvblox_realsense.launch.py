@@ -35,7 +35,6 @@ DEFAULT_CONTAINER_NAME = 'nvblox_container'
 def generate_launch_description() -> LaunchDescription:
     log_level = LaunchConfiguration('log_level')
     container_name = LaunchConfiguration('container_name')
-    camera_namespace = LaunchConfiguration('camera_namespace')
     camera_prefix = LaunchConfiguration('camera_prefix')
 
     nvblox_node = ComposableNode(
@@ -56,33 +55,12 @@ def generate_launch_description() -> LaunchDescription:
         ],
     )
 
-    realsense_splitter_node = ComposableNode(
-        namespace=camera_namespace,
-        name='realsense_splitter_node',
-        package='realsense_splitter',
-        plugin='nvblox::RealsenseSplitterNode',
-        parameters=[{
-            'input_qos': 'SENSOR_DATA',
-            'output_qos': 'SENSOR_DATA'
-        }],
-        remappings=[
-            ('input/infra_1', [camera_prefix, '/infra1/image_rect_raw']),
-            ('input/infra_1_metadata', [camera_prefix, '/infra1/metadata']),
-            ('input/infra_2', [camera_prefix, '/infra2/image_rect_raw']),
-            ('input/infra_2_metadata', [camera_prefix, '/infra2/metadata']),
-            ('input/depth', [camera_prefix, '/depth/image_rect_raw']),
-            ('input/depth_metadata', [camera_prefix, '/depth/metadata']),
-            ('input/pointcloud', [camera_prefix, '/depth/color/points']),
-            ('input/pointcloud_metadata', [camera_prefix, '/depth/metadata']),
-        ])
-
     container = ComposableNodeContainer(
         name=container_name,
         namespace='',
         package='rclcpp_components',
         executable='component_container_mt',
         composable_node_descriptions=[
-            realsense_splitter_node,
             nvblox_node,
         ],
         output='screen',
