@@ -28,7 +28,7 @@ NVBLOX_EXAMPLES_SHARE = get_package_share_directory('nvblox_examples_bringup')
 NVBLOX_BASE_CONFIG = os.path.join(
     NVBLOX_EXAMPLES_SHARE, 'config', 'nvblox', 'nvblox_base.yaml')
 NVBLOX_REALSENSE_CONFIG = os.path.join(
-    NVBLOX_EXAMPLES_SHARE, 'config', 'nvblox', 'specializations', 'nvblox_realsense.yaml')
+    NVBLOX_EXAMPLES_SHARE, 'config', 'nvblox', 'specializations', 'nvblox_humanoid.yaml')
 DEFAULT_CONTAINER_NAME = 'nvblox_container'
 
 
@@ -52,6 +52,7 @@ def generate_launch_description() -> LaunchDescription:
             NVBLOX_REALSENSE_CONFIG,
             {'num_cameras': 1},
             {'use_lidar': False},
+            {'use_sim_time': True}
         ],
     )
 
