@@ -12,7 +12,7 @@ services:
       - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
     volumes:
       - ../../../:/workspaces/nvblox/
-      - /home/helen/data/:/data/
+      - ../../../../../data:/data/
     privileged: true
     network_mode: host
     runtime: nvidia
