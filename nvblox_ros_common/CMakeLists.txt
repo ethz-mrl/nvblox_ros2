@@ -30,6 +30,7 @@ find_package(CUDAToolkit REQUIRED)
 #############
 add_library(${PROJECT_NAME}_lib SHARED
   src/check_cuda_errors.cpp
+  src/qos.cpp
 )
 ament_target_dependencies(${PROJECT_NAME}_lib
   rclcpp
@@ -78,6 +79,7 @@ ament_export_targets(
 
 ament_export_dependencies(
   rclcpp
+  CUDAToolkit
 )
 
 ament_package()

@@ -81,12 +81,7 @@ find_package(Threads REQUIRED)
 find_package(visualization_msgs REQUIRED)
 find_package(cv_bridge REQUIRED)
 find_package(nvblox_ros_common REQUIRED)
-find_package(isaac_ros_common REQUIRED)
 find_package(CUDAToolkit REQUIRED)
-find_package(isaac_ros_managed_nitros REQUIRED)
-find_package(isaac_ros_nitros_image_type REQUIRED)
-find_package(isaac_ros_nitros_camera_info_type REQUIRED)
-find_package(isaac_ros_gxf REQUIRED)
 
 #############
 # LIBRARIES #
@@ -134,11 +129,6 @@ ament_target_dependencies(${PROJECT_NAME}_lib
   visualization_msgs
   cv_bridge
   nvblox_ros_common
-  isaac_ros_managed_nitros
-  isaac_ros_nitros_image_type
-  isaac_ros_nitros_camera_info_type
-  isaac_ros_gxf
-  isaac_ros_common
 )
 target_include_directories(${PROJECT_NAME}_lib PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -253,9 +243,6 @@ if(BUILD_TESTING)
     cmake_policy(SET CMP0148 OLD)
   endif()
 
-  # Integrations tests
-  add_subdirectory(test/integration_tests)
-
   # Unit Tests
   add_subdirectory(test/unit_tests)
 endif()
@@ -281,8 +268,6 @@ ament_export_dependencies(
   libstatistics_collector
   visualization_msgs
   cv_bridge
-  isaac_ros_gxf
-  isaac_ros_managed_nitros
   nvblox_ros_common
   nvblox_msgs
   std_srvs

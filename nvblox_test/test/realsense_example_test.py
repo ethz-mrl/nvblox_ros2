@@ -23,13 +23,21 @@ import pytest
 import launch_testing
 from launch import LaunchDescription
 
-from isaac_ros_test import IsaacROSBaseTest
+try:
+    from isaac_ros_test import IsaacROSBaseTest
+except ModuleNotFoundError:
+    IsaacROSBaseTest = None
 import isaac_ros_launch_utils as lu
 from nvblox_msgs.msg import DistanceMapSlice, Mesh
 
 BAG_NAME = "galileo_static_3_2"
 TIMEOUT = 120
 BAG_PATH = os.path.join(lu.get_isaac_ros_ws_path(), 'isaac_ros_assets', 'rosbags', BAG_NAME)
+
+
+if IsaacROSBaseTest is None:
+    pytest.skip('isaac_ros_test is not available; example PoL tests disabled.',
+                allow_module_level=True)
 
 
 @pytest.mark.rostest

@@ -26,7 +26,10 @@ function(add_nvblox_ros_unit_test test_name)
     endif()
     # Build the test
     ament_add_gtest(${test_name} ${test_name}.${test_file_extension})
-    target_link_libraries(${test_name} ${PROJECT_NAME}_lib)
+    target_link_libraries(${test_name}
+      ${PROJECT_NAME}_lib
+      nvblox_gpu_hash
+      nvblox_stdgpu)
     set_nvblox_compiler_options(${test_name})
 endfunction()
 

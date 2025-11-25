@@ -23,8 +23,9 @@ ament_auto_find_build_dependencies()
 
 # ROS deps
 find_package(rclcpp REQUIRED)
-find_package(isaac_ros_common REQUIRED)
 find_package(nvblox_msgs REQUIRED)
+find_package(nvblox_ros_common REQUIRED)
+
 
 ######## Main executable
 add_executable(nvblox_voxel_layer_adapter
@@ -36,7 +37,7 @@ target_include_directories(nvblox_voxel_layer_adapter PUBLIC
   "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
   "$<INSTALL_INTERFACE:include>"
 )
-ament_target_dependencies(nvblox_voxel_layer_adapter rclcpp isaac_ros_common nvblox_msgs)
+ament_target_dependencies(nvblox_voxel_layer_adapter rclcpp nvblox_msgs nvblox_ros_common)
 
 
 ######## Main executable for Mesh representation
@@ -49,7 +50,7 @@ target_include_directories(nvblox_mesh_layer_adapter PUBLIC
   "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
   "$<INSTALL_INTERFACE:include>"
 )
-ament_target_dependencies(nvblox_mesh_layer_adapter rclcpp isaac_ros_common nvblox_msgs)
+ament_target_dependencies(nvblox_mesh_layer_adapter rclcpp  nvblox_msgs nvblox_ros_common)
 
 ######### Install & Export
 include(GNUInstallDirs)

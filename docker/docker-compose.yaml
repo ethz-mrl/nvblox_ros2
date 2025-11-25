@@ -1,0 +1,21 @@
+services:
+  nvblox_ros2:
+    image: nvblox_ros2
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      args:
+        ARCH: ${NVBLOX_ARCH}
+    working_dir: /workspaces/nvblox
+    environment:
+      - DISPLAY=${DISPLAY}
+      - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+    volumes:
+      - ../../../:/workspaces/nvblox/
+      - ~/data:/data/
+    privileged: true
+    network_mode: host
+    runtime: nvidia
+    stdin_open: true
+    tty: true
+    command: ["/bin/bash", "-ic","tail -f /dev/null"]

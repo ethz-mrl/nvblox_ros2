@@ -35,7 +35,6 @@
   <author>David Tingdahl</author>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
-  <build_depend>isaac_ros_common</build_depend>
 
   <!-- Utils -->
   <exec_depend>isaac_ros_launch_utils</exec_depend>
@@ -61,7 +60,6 @@
 
   <test_depend>ament_cmake_copyright</test_depend>
   <test_depend>ament_cmake_lint_cmake</test_depend>
-  <test_depend>isaac_ros_test_cmake</test_depend>
 
   <export>
     <build_type>ament_cmake</build_type>

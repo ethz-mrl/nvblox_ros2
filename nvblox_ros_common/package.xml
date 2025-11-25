@@ -36,7 +36,6 @@
 
   <buildtool_depend>ament_cmake</buildtool_depend>
   <buildtool_depend>ament_cmake_auto</buildtool_depend>
-  <build_depend>isaac_ros_common</build_depend>
 
   <depend>rclcpp</depend>
 

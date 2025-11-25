@@ -28,7 +28,6 @@ find_package(sensor_msgs REQUIRED)
 find_package(cv_bridge REQUIRED)
 find_package(nvblox_ros_common REQUIRED)
 find_package(CUDAToolkit REQUIRED)
-find_package(isaac_ros_common REQUIRED)
 
 #############
 # LIBRARIES #
@@ -42,7 +41,6 @@ ament_target_dependencies(${PROJECT_NAME}_lib
   sensor_msgs
   cv_bridge
   nvblox_ros_common
-  isaac_ros_common
 )
 target_include_directories(${PROJECT_NAME}_lib PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -100,6 +98,7 @@ ament_export_dependencies(
   rclcpp
   sensor_msgs
   cv_bridge
+  nvblox_ros_common
 )
 
 ament_package()
