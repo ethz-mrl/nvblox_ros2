@@ -52,7 +52,7 @@ def generate_launch_description() -> LaunchDescription:
             NVBLOX_REALSENSE_CONFIG,
             {'num_cameras': 1},
             {'use_lidar': False},
-            {'use_sim_time': True}
+            {'use_sim_time': False}
         ],
     )
 
