@@ -21,6 +21,7 @@ from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration
+from launch.conditions import UnlessCondition
 from launch_ros.actions import ComposableNodeContainer
 from launch_ros.descriptions import ComposableNode
 
@@ -30,32 +31,44 @@ NVBLOX_BASE_CONFIG = os.path.join(
 NVBLOX_REALSENSE_CONFIG = os.path.join(
     NVBLOX_EXAMPLES_SHARE, 'config', 'nvblox', 'specializations', 'nvblox_humanoid.yaml')
 DEFAULT_CONTAINER_NAME = 'nvblox_container'
+RS_EMITTER_ON_CONFIG_FILE_PATH = os.path.join(
+    NVBLOX_EXAMPLES_SHARE, 'config', 'sensors', 'realsense_emitter_on.yaml')
 
 
 def generate_launch_description() -> LaunchDescription:
     log_level = LaunchConfiguration('log_level')
     container_name = LaunchConfiguration('container_name')
-    camera_prefix = LaunchConfiguration('camera_prefix')
+    camera_namespace = LaunchConfiguration('camera_namespace') 
+    camera_name = LaunchConfiguration('camera_name') 
 
     nvblox_node = ComposableNode(
         name='nvblox_node',
         package='nvblox_ros',
         plugin='nvblox::NvbloxNode',
         remappings=[
-            ('camera_0/color/camera_info', [camera_prefix, '/color/camera_info']),
-            ('camera_0/color/image', [camera_prefix, '/color/image_raw']),
-            ('camera_0/depth/camera_info', [camera_prefix, '/depth/camera_info']),
-            ('camera_0/depth/image', [camera_prefix, '/depth/image_rect_raw']),
+            ('camera_0/color/camera_info', [camera_namespace, camera_name, '/color/camera_info']),
+            ('camera_0/color/image', [camera_namespace, camera_name, '/color/image_raw']),
+            ('camera_0/depth/camera_info', [camera_namespace, camera_name, '/depth/camera_info']),
+            ('camera_0/depth/image', [camera_namespace, camera_name, '/depth/image_rect_raw']),
         ],
         parameters=[
             NVBLOX_BASE_CONFIG,
             NVBLOX_REALSENSE_CONFIG,
-            {'num_cameras': 1},
-            {'use_lidar': False},
-            {'use_sim_time': False}
         ],
     )
-
+    
+    realsense_node = ComposableNode(
+        name=camera_name,
+        namespace=camera_namespace, 
+        package='realsense2_camera',
+        plugin='realsense2_camera::RealSenseNodeFactory',
+        parameters = [
+            RS_EMITTER_ON_CONFIG_FILE_PATH,
+            {'camera_name': camera_name}
+        ],
+        condition=UnlessCondition(LaunchConfiguration('standalone')),
+    )
+    
     container = ComposableNodeContainer(
         name=container_name,
         namespace='',
@@ -63,6 +76,7 @@ def generate_launch_description() -> LaunchDescription:
         executable='component_container_mt',
         composable_node_descriptions=[
             nvblox_node,
+            realsense_node,
         ],
         output='screen',
         arguments=['--ros-args', '--log-level', log_level],
@@ -76,10 +90,13 @@ def generate_launch_description() -> LaunchDescription:
             'container_name', default_value=DEFAULT_CONTAINER_NAME,
             description='Name of the component container to start.'),
         DeclareLaunchArgument(
-            'camera_namespace', default_value='camera/d435',
+            'standalone', default_value='false',
+            description='Whether to launch nvblox standalone or to also launch the realsense camera node.'),
+        DeclareLaunchArgument(
+            'camera_namespace', default_value='/camera/',
             description='Namespace of the RealSense camera to use.'),
         DeclareLaunchArgument(
-            'camera_prefix', default_value='/camera/d435',
+            'camera_name', default_value='d435',
             description='Prefix used for fully-qualified RealSense topics.'),
         container,
     ])
