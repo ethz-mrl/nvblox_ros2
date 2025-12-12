@@ -24,7 +24,9 @@ RUN echo "source /opt/ros/jazzy/install/setup.bash" >> /etc/bash.bashrc
 RUN /ros2_install.sh realsense2_camera
 
 ## --- X86 Stage ---
-FROM nvidia/cuda:12.6.0-devel-ubuntu24.04 AS x86_64
+FROM nvidia/cuda:12.8.1-devel-ubuntu24.04 AS x86_64
+
+RUN touch /etc/nvblox_env.sh
 
 SHELL ["/bin/bash", "-ic"]
 ENV DEBIAN_FRONTEND=noninteractive
@@ -53,6 +55,30 @@ RUN --mount=type=cache,target=/var/cache/apt \
 
 # Source ROS in any new bash shell
 RUN echo "source /opt/ros/jazzy/setup.bash" >> /etc/bash.bashrc
+
+# Install python
+RUN --mount=type=cache,target=/var/cache/apt \
+    apt-get install -y --no-install-recommends \
+    python3-pip \
+    python3-venv
+
+# Install pytorch.
+# Note that all python deps are installed inside a venv. This is required by ubuntu >= 24.
+RUN python3 -m venv /opt/venv --system-site-packages
+RUN source /opt/venv/bin/activate && \
+    python3 -m pip install --ignore-installed --upgrade pip && \
+    python3 -m pip install \
+    torch==2.8.0
+
+RUN --mount=type=cache,target=/var/cache/apt \
+    apt-get install -y --no-install-recommends \
+    cuda-nsight-systems-12-8
+
+# Make sure we have the torch cmake path
+RUN source /opt/venv/bin/activate && python3 -c "import site; print(site.getsitepackages()[0])" > /site-packages-dir
+RUN echo "export CMAKE_PREFIX_PATH=$(cat /site-packages-dir)/torch" | tee --append /etc/nvblox_env.sh && \
+    # Always activate the venv upon login \
+    echo 'source /opt/venv/bin/activate' | tee --append /etc/nvblox_env.sh
 
 ## --- FINAL Stage with common dependencies ---
 ARG ARCH
@@ -84,8 +110,9 @@ RUN --mount=type=cache,target=/var/cache/apt \
 # Setup env variables by adding them to the global bashrc.
 RUN touch /etc/nvblox_env.sh
 RUN echo 'PATH=$PATH:/usr/local/cuda/bin' | tee --append /etc/nvblox_env.sh && \
-    echo 'export CUDA_PATH=/usr/local/cuda' | tee --append /etc/nvblox_env.sh
-RUN echo 'source /etc/nvblox_env.sh' | tee --append /etc/bash.bashrc
+    # Explicit CUDA_PATH is needed here due to the non-standard location of the nvcc compiler (see section on ccache)
+    echo 'export CUDA_PATH=/usr/local/cuda' | tee --append /etc/nvblox_env.sh && \
+    echo 'source /etc/nvblox_env.sh' | tee --append /etc/bash.bashrc
     
 # (Optional but usually needed) Colcon & dev tools
 RUN --mount=type=cache,target=/var/cache/apt \

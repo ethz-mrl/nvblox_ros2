@@ -525,7 +525,8 @@ void NvbloxNode::depthImageCallback(
       nvblox::Time(now().nanoseconds()));
 
   pushOntoQueue<ImageTypeVariant>(
-      "depth_queue", std::make_tuple(depth_image, depth_camera_info),
+      "depth_queue",
+      std::make_tuple(depth_image, depth_camera_info),
       depth_image_queue_, &depth_queue_mutex_);
 }
 

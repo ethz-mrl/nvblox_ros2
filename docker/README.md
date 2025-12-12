@@ -3,6 +3,9 @@
 This guide explains how to build and run **nvblox** inside a Docker container on a **Jetson Orin NX**.
 The docker container includes ROS Jazzy and Cuda 12.8.
 
+**Note:** If you want to load datasets into the Docker container, place them in `~/data` on the host. 
+This directory is automatically mounted in the docker container at `/data`.
+
 ## 1. Clone the Repository
 ```bash
 mkdir -p nvblox_ros2_ws/src
