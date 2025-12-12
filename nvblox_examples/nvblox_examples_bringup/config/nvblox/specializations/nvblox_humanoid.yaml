@@ -11,11 +11,31 @@
     esdf_slice_bounds_visualization_attachment_frame_id: "d435_link"
     decay_tsdf_rate_hz: 0.0
 
+    use_lidar: true
+    lidar_width: 1024
+    lidar_height: 128
+    lidar_min_valid_range_m: 0.1
+    lidar_max_valid_range_m: 50.0
+    use_non_equal_vertical_fov_lidar_params: true
+    min_angle_below_zero_elevation_rad: -0.93
+    max_angle_above_zero_elevation_rad: 0.12
+
+    raycast_subsampling_factor: 1
+
     static_mapper:
       esdf_slice_height: -1.0
       # Expected to be tuned by users. Slice height depends on realsense mounting.
       esdf_slice_min_height: -1.1
       esdf_slice_max_height: -0.9
+      raycast_subsampling_factor: 1
+      lidar_tsdf_integrator:
+        view_calculator:
+          raycast_subsampling_factor: 1
+        projective_integrator:
+          view_calculator:
+            raycast_subsampling_factor: 1
+      view_calculator:
+        raycast_subsampling_factor: 1
 
     dynamic_mapper:
       esdf_slice_height: -1.0

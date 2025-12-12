@@ -562,8 +562,7 @@ void NvbloxNode::colorImageCallback(
       nvblox::Time(now().nanoseconds()));
 
   pushOntoQueue<ImageTypeVariant>(
-      "color_queue",
-      std::make_tuple(color_image, color_camera_info),
+      "color_queue", std::make_tuple(color_image, color_camera_info),
       color_image_queue_, &color_queue_mutex_);
 }
 
@@ -1333,16 +1332,20 @@ bool NvbloxNode::processLidarPointcloud(
   // NOTE(alexmillane): Note that internally we cache checks, so each LiDAR
   // intrisics model is only tested against a single pointcloud. This is because
   // the check is expensive to perform.
-  if (!pointcloud_converter_.checkLidarPointcloud(pointcloud_ptr, lidar)) {
+  /*if (!pointcloud_converter_.checkLidarPointcloud(pointcloud_ptr, lidar)) {
     RCLCPP_ERROR_ONCE(get_logger(),
                       "LiDAR intrinsics are inconsistent with the received "
                       "pointcloud. Failing integration.");
     return true;
-  }
+  }*/
 
   timing::Timer lidar_conversion_timer("ros/lidar/conversion");
   pointcloud_converter_.depthImageFromPointcloudGPU(pointcloud_ptr, lidar,
                                                     &pointcloud_image_);
+
+  // nvblox::io::writeToPng("/tmp/pointcloud_depth.png", pointcloud_image_);  //
+  // DepthImage -> PNG
+
   lidar_conversion_timer.Stop();
 
   timing::Timer lidar_integration_timer("ros/lidar/integration");

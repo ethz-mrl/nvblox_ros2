@@ -46,13 +46,14 @@ def generate_launch_description() -> LaunchDescription:
             ('camera_0/color/image', [camera_prefix, '/color/image_raw']),
             ('camera_0/depth/camera_info', [camera_prefix, '/depth/camera_info']),
             ('camera_0/depth/image', [camera_prefix, '/depth/image_rect_raw']),
+            ('pointcloud', '/dlio/odom_node/pointcloud/deskewed')
         ],
         parameters=[
             NVBLOX_BASE_CONFIG,
             NVBLOX_REALSENSE_CONFIG,
             {'num_cameras': 1},
-            {'use_lidar': False},
-            {'use_sim_time': False}
+            {'use_sim_time': False},
+            {'print_timings_to_console': True}
         ],
     )
 
